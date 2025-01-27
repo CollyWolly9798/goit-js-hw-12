@@ -8,16 +8,27 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
-    <load src="./partials/header.html" icon-path="img/sprite.svg#logo" />
-
-    <main>
-      <!-- Loads the specified .html file -->
-      <load src="./partials/vite-promo.html" />
-      <load src="./partials/badges.html" />
-    </main>
-
-    <load src="./partials/footer.html" />
-
+    <section class="gallery">
+      <div class="container">
+        <form class="search-form js-search-form">
+          <input
+            class="search-input js-search-input"
+            type="text"
+            name="user_query"
+            required
+            placeholder="Search for images..."
+          />
+          <button class="search-btn" type="submit">Пошук</button>
+        </form>
+        <div class="gallery js-gallery"></div>
+        <div class="load-more-container">
+          <button class="load-more-btn js-load-more-btn" type="button">
+            Load More
+          </button>
+        </div>
+      </div>
+    </section>
     <script type="module" src="./main.js"></script>
+    <div class="loader js-loader"></div>
   </body>
 </html>
