@@ -20,7 +20,6 @@ const lightbox = new SimpleLightbox('.js-gallery a', {
   captionDelay: 250,
 });
 
-
 loadMoreBtnEl.classList.add('is-hidden');
 
 const loadImages = () => {
@@ -31,21 +30,23 @@ const loadImages = () => {
       if (!data.hits || data.hits.length === 0) {
         iziToast.error({
           title: 'Error',
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
+          message: 'Sorry, there are no images matching your search query. Please try again!',
         });
+        loadMoreBtnEl.classList.add('is-hidden');
         return;
       }
 
-      const galleryTemplate = data.hits
-        .map(el => createGalleryTemplate(el))
-        .join('');
+      const galleryTemplate = data.hits.map(el => createGalleryTemplate(el)).join('');
       galleryEl.insertAdjacentHTML('beforeend', galleryTemplate);
 
-      if (data.totalHits > page * data.hits.length) {
-        loadMoreBtnEl.classList.remove('is-hidden');
-      } else {
+      if (page * 15 >= data.totalHits) {
         loadMoreBtnEl.classList.add('is-hidden');
+        iziToast.info({
+          title: 'Info',
+          message: 'You have reached the end of search results.',
+        });
+      } else {
+        loadMoreBtnEl.classList.remove('is-hidden');
       }
 
       lightbox.refresh();
@@ -54,8 +55,7 @@ const loadImages = () => {
         message: `Found ${data.totalHits || 0} images.`,
       });
 
-      const { height: cardHeight } = galleryEl
-        .firstElementChild.getBoundingClientRect();
+      const { height: cardHeight } = galleryEl.firstElementChild.getBoundingClientRect();
       window.scrollBy({
         top: cardHeight * 2,
         behavior: 'smooth',
