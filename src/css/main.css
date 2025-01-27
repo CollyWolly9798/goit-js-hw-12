@@ -54,7 +54,7 @@ body {
   color: #333;
 }
 
-.is-hidden {
+.load-more-btn.is-hidden {
   display: none;
 }
 
