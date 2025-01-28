@@ -13,6 +13,7 @@ const loadMoreBtnEl = document.querySelector('.js-load-more-btn');
 
 let page = 1;
 let searchedQuery = '';
+let totalHits = 0;
 
 const lightbox = new SimpleLightbox('.js-gallery a', {
   captionsData: 'alt',
@@ -22,7 +23,7 @@ const lightbox = new SimpleLightbox('.js-gallery a', {
 
 loadMoreBtnEl.classList.add('is-hidden');
 
-const loadImages = () => {
+const loadImages = (showTotalImagesMessage = false) => {
   loaderEl.style.display = 'block';
 
   fetchPhotosByQuery(searchedQuery, page)
@@ -39,7 +40,16 @@ const loadImages = () => {
       const galleryTemplate = data.hits.map(el => createGalleryTemplate(el)).join('');
       galleryEl.insertAdjacentHTML('beforeend', galleryTemplate);
 
-      if (page * 15 >= data.totalHits) {
+      totalHits = data.totalHits;
+
+      if (showTotalImagesMessage) {
+        iziToast.success({
+          title: 'Success',
+          message: `Found ${totalHits} images.`,
+        });
+      }
+
+      if (page * 15 >= totalHits) {
         loadMoreBtnEl.classList.add('is-hidden');
         iziToast.info({
           title: 'Info',
@@ -50,10 +60,6 @@ const loadImages = () => {
       }
 
       lightbox.refresh();
-      iziToast.success({
-        title: 'Success',
-        message: `Found ${data.totalHits || 0} images.`,
-      });
 
       const { height: cardHeight } = galleryEl.firstElementChild.getBoundingClientRect();
       window.scrollBy({
@@ -77,17 +83,20 @@ const onSearchFormSubmit = event => {
   event.preventDefault();
   galleryEl.innerHTML = '';
   page = 1;
+  totalHits = 0;
 
   searchedQuery = event.currentTarget.elements.user_query.value.trim();
+
   if (searchedQuery === '') {
     iziToast.error({
       title: 'Error',
-      message: 'Please fill in the search form!',
+      message: 'Please enter a search term!',
     });
+    loadMoreBtnEl.classList.add('is-hidden');
     return;
   }
 
-  loadImages();
+  loadImages(true);
 };
 
 const onLoadMoreBtnClick = () => {
